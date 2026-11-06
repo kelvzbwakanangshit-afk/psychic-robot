@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Banat Test Bot · Dashboard</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0d12;--panel:#131722;--panel2:#191f2c;--line:#293244;--text:#edf1f8;--muted:#9ba7ba;--accent:#a78bfa;--good:#55d6a3;--bad:#ff7d91;--warn:#f4c875}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#19152d 0,var(--bg) 48%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}button,input{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:10px 14px;background:var(--panel2);color:var(--text);font-weight:650}button:disabled{opacity:.45;cursor:not-allowed}.primary{background:var(--accent);color:#160d2c;border-color:transparent}.danger{border-color:#663544;color:#ffb2bf}.wrap{max-width:1080px;margin:auto;padding:24px 16px 60px}.top{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:22px}.brand{display:flex;gap:12px;align-items:center}.logo{display:grid;place-items:center;width:46px;height:46px;border-radius:14px;background:#282044;color:#c7b7ff;font-size:24px;font-weight:900}.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:800}.sub{color:var(--muted);margin:2px 0 0}.status-pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:99px;padding:7px 11px;color:var(--muted);font-size:13px}.dot{width:8px;height:8px;border-radius:50%;background:var(--warn)}.dot.good{background:var(--good)}.dot.bad{background:var(--bad)}h1{font-size:clamp(23px,4vw,32px);line-height:1.15;margin:3px 0}h2{font-size:17px;margin:0 0 13px}.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}.card{background:linear-gradient(145deg,#171c29,#11151e);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0}.span8{grid-column:span 8}.span4{grid-column:span 4}.span6{grid-column:span 6}.span12{grid-column:span 12}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.metric{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:13px}.metric label{display:block;color:var(--muted);font-size:12px}.metric strong{display:block;font-size:21px;margin-top:4px;overflow-wrap:anywhere}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.row{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #252c39}.row:last-child{border:0}.row span:first-child{color:var(--muted)}.hint{font-size:13px;color:var(--muted)}.setup{padding-left:20px;margin:0}.setup li{padding:5px 0}.tag{font-size:12px;border:1px solid var(--line);border-radius:7px;padding:3px 7px;color:var(--muted)}code{background:#0b0e15;border:1px solid var(--line);padding:2px 5px;border-radius:5px;overflow-wrap:anywhere}.log{font:12px/1.6 ui-monospace,SFMono-Regular,monospace;color:#cbd5e1;white-space:pre-wrap;overflow-wrap:anywhere;max-height:260px;overflow:auto;background:#0a0d13;padding:12px;border:1px solid var(--line);border-radius:10px}.field{display:flex;gap:8px;flex-wrap:wrap}.field input{flex:1;min-width:180px;background:#0a0d13;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px}.notice{padding:10px 12px;border-radius:10px;background:#241e13;border:1px solid #51412a;color:#f4d79b;font-size:13px}.footer{color:var(--muted);font-size:12px;margin-top:18px}@media(max-width:700px){.span8,.span4,.span6{grid-column:span 12}.metrics{grid-template-columns:1fr 1fr}.wrap{padding:18px 12px 40px}.card{padding:15px}}
+</style>
+</head>
+<body><main class="wrap">
+<header class="top"><div class="brand"><div class="logo">B</div><div><div class="eyebrow">Standalone edition</div><h1>Banat Test Bot</h1><p class="sub">Essentials dashboard · no RPG, economy, music, or PM mode</p></div></div><div class="status-pill"><i class="dot" id="statusDot"></i><span id="statusText">Connecting…</span></div></header>
+<div class="grid">
+<section class="card span8"><h2>Bot overview</h2><div class="metrics"><div class="metric"><label>Messenger session</label><strong id="connection">—</strong></div><div class="metric"><label>Bot process</label><strong id="process">—</strong></div><div class="metric"><label>Process uptime</label><strong id="uptime">—</strong></div></div><div class="actions"><button class="primary" id="startBtn">Start bot processing</button><button class="danger" id="stopBtn">Pause bot processing</button><button id="refreshBtn">Refresh status</button></div><p class="hint" id="lastUpdated">Waiting for status…</p></section>
+<section class="card span4"><h2>Runtime</h2><div class="row"><span>Node.js</span><strong id="node">—</strong></div><div class="row"><span>Memory RSS</span><strong id="memory">—</strong></div><div class="row"><span>Dashboard API</span><strong id="apiState">Checking</strong></div><div class="row"><span>Edition</span><span class="tag">Banat essentials</span></div></section>
+<section class="card span6"><h2>Session setup</h2><div class="notice">Paste your Facebook session in the panel below. It is held in server memory only; no persistent disk or encryption-key environment variable is needed.</div><ol class="setup"><li>Paste a single-line cookie header or complete JSON appstate export.</li><li>Choose Save session. The bot will attempt to connect immediately.</li><li>If Render restarts, redeploys, or spins down, the session is cleared and you must paste it again.</li></ol><p class="hint">Never share your Facebook session or put it in frontend code, screenshots, or public logs.</p></section>
+<section class="card span12"><h2>Messenger cookie session</h2><p class="hint">Paste a single-line cookie header or a complete JSON appstate export. JSON arrays and appState/cookies wrapper objects are normalized and held in server memory only. Saving attempts to connect immediately; Render restarts and spin-downs clear the session, so paste it again afterward.</p><textarea id="sessionCookie" rows="4" autocomplete="off" spellcheck="false" placeholder="Paste cookie header or complete JSON appstate export here" style="width:100%;resize:vertical;background:#0a0d13;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:12px"></textarea><div class="actions"><button class="primary" id="saveSession">Save session</button><button class="danger" id="clearSession">Clear saved cookie</button><button id="refreshSession">Refresh session status</button></div><p class="hint" id="sessionMessage">Checking saved session…</p><div class="notice">Render Free limitation: sessions disappear after a restart, redeploy, or spin-down. You do not need a persistent disk or ECLIPSE_SESSION_ENCRYPTION_KEY. Paste your session again whenever that happens.</div></section>
+<section class="card span6"><h2>Banat controls</h2><div class="row"><span>Activation command</span><code>!banat on</code></div><div class="row"><span>Disable command</span><code>!banat off</code></div><div class="row"><span>Toggle/status/help</span><code>!banat toggle/status/help</code></div><div class="row"><span>Default-on mode</span><code>BANAT_DEFAULT_ON=true</code></div><p class="hint">Activation commands are sent in the Messenger group itself. This dashboard only exposes controls supported by the test bot API.</p></section>
+<section class="card span6"><h2>Banat group picker</h2><p class="hint">Load your Messenger group chats, then choose which chats can run Banat. This does not add Auto Target.</p><div class="field"><button id="refreshGroups">Load Messenger groups</button><select id="groupThreadID" aria-label="Choose Messenger group"><option value="">Choose a group…</option></select><button id="loadGroup">Load settings</button></div><div class="field"><select id="groupBanatMode"><option value="inherit">Use !banat on/off in this group</option><option value="on">Banat always enabled in this group</option><option value="off">Banat disabled in this group</option></select><label><input id="groupTyping" type="checkbox" checked> Typing indicator</label></div><div class="field"><label>Reply delay ms <input id="groupReplyDelay" type="number" min="0" max="30000" placeholder="Default"></label><label>Cooldown ms <input id="groupCooldown" type="number" min="0" max="300000" placeholder="Default"></label></div><div class="field"><label>Quiet start (PH time) <input id="quietStart" type="time"></label><label>Quiet end (PH time) <input id="quietEnd" type="time"></label></div><div class="actions"><button class="primary" id="saveGroup">Save group settings</button></div><p class="hint" id="groupMessage">Load Messenger groups to begin.</p></section>
+<section class="card span6"><h2>Custom reaction emoji</h2><p class="hint">Choose the emoji used when Banat reacts to its own replies and, optionally, incoming messages.</p><div class="field"><label><input id="reactionEnabled" type="checkbox" checked> Reactions enabled</label><input id="reactionEmoji" maxlength="16" value="😆" aria-label="Reaction emoji" placeholder="Emoji"></div><div class="field"><select id="reactionTarget"><option value="bot_replies">Bot replies</option><option value="incoming_messages">Incoming messages</option><option value="both">Both</option></select><label>Probability % <input id="reactionProbability" type="number" min="0" max="100" value="100"></label><label>Cooldown sec <input id="reactionCooldown" type="number" min="0" max="86400" value="0"></label></div><div class="actions"><button class="primary" id="saveReaction">Save emoji settings</button><button id="loadSettings">Reload settings</button></div><p class="hint" id="reactionMessage">Default emoji: 😆</p></section>
+
+<section class="card span12" id="raidModePanel">
+  <h2>Raid Mode · persistent group theme</h2>
+  <p class="hint">Configure one reusable theme, preview it, select groups, then confirm activation here. Raid Mode changes group names, every member's nickname, and group photos. It sends no Messenger confirmation messages.</p>
+  <div class="notice" id="raidStatus">Enter the dashboard key and load Raid Mode status. Neon and persistent image storage must be configured before activation.</div>
+  <div class="field" style="margin-top:12px"><label style="flex:1;min-width:220px">Dashboard API key <input id="raidApiKey" type="password" autocomplete="off" placeholder="X-ECLIPSE-DASHBOARD-KEY" style="width:100%"></label><button id="raidRefresh">Load Raid Mode</button></div>
+  <div class="grid" style="margin-top:12px">
+    <div class="card span6">
+      <h2>Shared theme settings</h2>
+      <label>Group chat name <input id="raidGroupTitle" maxlength="100" placeholder="Enter the enforced group name" style="width:100%;margin:6px 0 12px;padding:10px;background:#0a0d13;color:var(--text);border:1px solid var(--line);border-radius:9px"></label>
+      <label>Nickname applied to every member <input id="raidNickname" maxlength="64" placeholder="Enter the enforced nickname" style="width:100%;margin:6px 0 12px;padding:10px;background:#0a0d13;color:var(--text);border:1px solid var(--line);border-radius:9px"></label>
+      <label>Group profile picture <input id="raidImageFile" type="file" accept="image/png,image/jpeg,image/webp" style="display:block;margin:8px 0"></label>
+      <p class="hint">PNG, JPEG, or WebP · maximum 5 MB. The image is uploaded once to persistent object storage; its key and theme metadata are stored in Neon.</p>
+      <div class="actions"><button id="raidSaveTheme">Save theme</button><button id="raidUploadImage">Upload photo</button></div>
+      <p class="hint" id="raidThemeMessage">No theme loaded yet.</p>
+    </div>
+    <div class="card span6">
+      <h2>Theme preview</h2>
+      <div style="border:1px solid var(--line);border-radius:12px;padding:12px;background:#0a0d13">
+        <strong id="raidPreviewTitle">Your group name preview</strong>
+        <p class="hint" style="margin:8px 0">Member nickname: <strong id="raidPreviewNickname">Your nickname</strong></p>
+        <img id="raidPreviewImage" alt="Raid Mode group photo preview" style="display:none;max-width:100%;max-height:220px;object-fit:contain;border-radius:10px">
+        <p class="hint" id="raidPreviewImageLabel">No group photo selected.</p>
+      </div>
+      <p class="hint">This theme is stored once and can be reused by separately configured bot instances that point to the same Raid theme ID.</p>
+    </div>
+    <div class="card span6">
+      <h2>Select Messenger groups</h2>
+      <div class="actions" style="margin-top:0"><button id="raidLoadGroups">Load groups</button><button id="raidSelectAll">Select all loaded</button><button id="raidClearGroups">Clear selection</button></div>
+      <div id="raidGroupChoices" class="log" style="max-height:220px;margin-top:10px">Load Messenger groups to choose where Raid Mode should run.</div>
+      <p class="hint" id="raidSelectionCount">0 groups selected.</p>
+    </div>
+    <div class="card span6">
+      <h2>Enforcement status</h2>
+      <div id="raidGroupStatus" class="log" style="max-height:220px">No status loaded.</div>
+      <div class="actions"><button class="primary" id="raidActivate">Preview & activate</button><button id="raidRefreshStatus">Refresh status</button><button class="danger" id="raidEmergencyStop">Emergency stop</button></div>
+      <p class="hint" id="raidActionMessage">Activation and emergency stop are confirmed from this dashboard only.</p>
+    </div>
+  </div>
+</section>
+
+<section class="card span12"><h2>Recent dashboard events</h2><div class="actions" style="margin-top:0;margin-bottom:10px"><button id="eventsBtn">Reload events</button><span class="hint" id="eventCount">No events loaded</span></div><div class="log" id="events">No events loaded yet.</div></section>
+<section class="card span12"><h2>Dashboard connection</h2><p class="hint">Dashboard requests are restricted to the configured dashboard origin.</p></section>
+</div><p class="footer">Banat Test Bot dashboard · read-only status unless an explicit bot control is available. No automatic deployment is performed by this page.</p>
+</main>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const fmtDuration = seconds => { seconds=Math.max(0,Number(seconds)||0); const d=Math.floor(seconds/86400),h=Math.floor(seconds%86400/3600),m=Math.floor(seconds%3600/60); return d?d+"d "+h+"h":h?h+"h "+m+"m":m+"m"; };
+  const fmtBytes = n => { n=Number(n)||0; return n>=1073741824?(n/1073741824).toFixed(2)+" GB":n>=1048576?(n/1048576).toFixed(1)+" MB":Math.round(n/1024)+" KB"; };
+  async function request(path, options={}) {
+    const headers=Object.assign({"Accept":"application/json"},options.headers||{});
+    if(options.body) headers["Content-Type"]="application/json";
+    const response=await fetch(path,Object.assign({},options,{headers,cache:"no-store"}));
+    let data={}; try{data=await response.json()}catch(_){}
+    if(!response.ok) throw new Error(data.error||("HTTP "+response.status));
+    return data;
+  }
+  function setStatus(ok,text){$("statusDot").className="dot "+(ok?"good":"bad");$("statusText").textContent=text;}
+  async function refresh(){
+    $("refreshBtn").disabled=true;
+    try {
+      const data=await request("/api/dashboard/status");
+      $("apiState").textContent="Online"; $("connection").textContent=data.facebook_connected?"Connected":"Disconnected";
+      $("process").textContent=data.bot_paused?"Paused":"Running";
+      $("uptime").textContent=fmtDuration(data.uptime_seconds);
+      $("node").textContent=data.node_version||"—";
+      $("memory").textContent=data.memory?fmtBytes(data.memory.rss):"—";
+      $("startBtn").disabled=!data.bot_paused; $("stopBtn").disabled=!!data.bot_paused;
+      setStatus(!!data.facebook_connected,data.facebook_connected?"Messenger connected":"API online · session offline");
+      const detail=data.last_listener_error?"Last listener error: "+data.last_listener_error:
+        (data.last_message_at?"Last Messenger event: "+new Date(data.last_message_at).toLocaleString():"No Messenger event received yet");
+      $("lastUpdated").textContent=detail+" · Updated "+new Date().toLocaleTimeString();
+    } catch(e) {
+      $("apiState").textContent="Unavailable"; setStatus(false,"Dashboard API unavailable");
+      $("lastUpdated").textContent=e.message+" · Check dashboard origin and service logs.";
+      $("connection").textContent="Unknown"; $("process").textContent="Unknown";
+    } finally {$("refreshBtn").disabled=false;}
+  }
+  async function control(action){
+    const button=action==="start"?"startBtn":"stopBtn"; $(button).disabled=true;
+    try { await request("/api/dashboard/bot/"+action,{method:"POST",body:"{}"}); await refresh(); }
+    catch(e){$("lastUpdated").textContent="Control failed: "+e.message; $(button).disabled=false;}
+  }
+  function fillGroup(g={}) {
+    $("groupBanatMode").value=g.banatMode||"inherit"; $("groupTyping").checked=g.typingEnabled!==false;
+    $("groupReplyDelay").value=g.replyDelayMs==null?"":g.replyDelayMs; $("groupCooldown").value=g.cooldownMs==null?"":g.cooldownMs;
+    $("quietStart").value=g.quietStart||""; $("quietEnd").value=g.quietEnd||"";
+  }
+  async function refreshGroups(){
+    const button=$("refreshGroups"); button.disabled=true;
+    try { const data=await request("/api/dashboard/groups"); const select=$("groupThreadID"),previous=select.value;
+      select.replaceChildren(new Option("Choose a group…",""));
+      for(const g of data.groups||[]) select.add(new Option(g.name+(g.participantCount?" ("+g.participantCount+")":""),g.threadID));
+      if(previous&&[...select.options].some(o=>o.value===previous))select.value=previous;
+      $("groupMessage").textContent=(data.groups||[]).length+" Messenger group(s) loaded.";
+    } catch(e){$("groupMessage").textContent="Could not load groups: "+e.message;} finally{button.disabled=false;}
+  }
+  async function loadGroup(){
+    const id=$("groupThreadID").value.trim();if(!id){$("groupMessage").textContent="Choose a group first.";return;}
+    try{const data=await request("/api/dashboard/settings");fillGroup((data.settings.groups||{})[id]||{});$("groupMessage").textContent="Loaded settings for selected group.";}
+    catch(e){$("groupMessage").textContent="Could not load group settings: "+e.message;}
+  }
+  async function saveGroup(){
+    const threadID=$("groupThreadID").value.trim();if(!threadID){$("groupMessage").textContent="Choose a group first.";return;}
+    const body={threadID,banatMode:$("groupBanatMode").value,typingEnabled:$("groupTyping").checked,replyDelayMs:$("groupReplyDelay").value===""?null:Number($("groupReplyDelay").value),cooldownMs:$("groupCooldown").value===""?null:Number($("groupCooldown").value),quietStart:$("quietStart").value,quietEnd:$("quietEnd").value};
+    try{const data=await request("/api/dashboard/settings/group",{method:"POST",body:JSON.stringify(body)});$("groupMessage").textContent="Saved settings for "+threadID+" (Banat: "+data.group.banatMode+").";loadEvents();}
+    catch(e){$("groupMessage").textContent="Save failed: "+e.message;}
+  }
+  async function loadSettings(){
+    try{const data=await request("/api/dashboard/settings"),r=data.settings.reaction||{};$("reactionEnabled").checked=r.enabled!==false;$("reactionEmoji").value=r.emoji||"😆";$("reactionTarget").value=r.target||"bot_replies";$("reactionProbability").value=r.probability??100;$("reactionCooldown").value=r.cooldownSeconds??0;$("reactionMessage").textContent="Loaded saved emoji settings.";}
+    catch(e){$("reactionMessage").textContent="Could not load settings: "+e.message;}
+  }
+  async function saveReaction(){
+    const body={enabled:$("reactionEnabled").checked,emoji:$("reactionEmoji").value.trim()||"😆",target:$("reactionTarget").value,probability:Number($("reactionProbability").value),cooldownSeconds:Number($("reactionCooldown").value)};
+    try{const data=await request("/api/dashboard/settings/reaction",{method:"POST",body:JSON.stringify(body)});$("reactionMessage").textContent="Saved reaction emoji "+data.reaction.emoji+".";loadEvents();}
+    catch(e){$("reactionMessage").textContent="Save failed: "+e.message;}
+  }
+  async function refreshSession(){
+    try{const data=await request("/api/dashboard/session");const configured=!!data.session?.configured;
+      $("sessionMessage").textContent=configured?"A session is currently held in server memory. It will be cleared when the service restarts or spins down.":"No dashboard-saved session found. The bot may still be using FB_COOKIES/FB_APPSTATE environment variables.";
+    }catch(e){$("sessionMessage").textContent="Session status unavailable: "+e.message;}
+  }
+  async function saveSession(){
+    const cookie=$("sessionCookie").value.trim();if(!cookie){$("sessionMessage").textContent="Paste a cookie header or complete JSON appstate export first.";return;}
+    $("saveSession").disabled=true;
+    try{const data=await request("/api/dashboard/session",{method:"POST",body:JSON.stringify({cookie})});
+      $("sessionCookie").value="";$("sessionMessage").textContent=data.message||"Session saved in memory. The bot is attempting to connect.";
+    }catch(e){$("sessionMessage").textContent="Save failed: "+e.message;}
+    finally{$("saveSession").disabled=false;}
+  }
+  async function clearSession(){
+    if(!confirm("Clear the dashboard session currently held in memory? Environment-based FB_COOKIES/FB_APPSTATE may still be used."))return;
+    try{await request("/api/dashboard/session",{method:"DELETE"});$("sessionMessage").textContent="In-memory dashboard session cleared.";await refreshSession();}
+    catch(e){$("sessionMessage").textContent="Clear failed: "+e.message;}
+  }
+  async function loadEvents(){
+    try {const data=await request("/api/dashboard/events"); const events=Array.isArray(data.events)?data.events:[]; $("eventCount").textContent=events.length+" event(s)"; $("events").textContent=events.length?events.map(e=>typeof e==="string"?e:JSON.stringify(e)).join("\n"):"No dashboard events recorded."; }
+    catch(e){$("events").textContent="Could not load events: "+e.message;}
+  }
+
+  const raidHeaders = () => {
+    const key = $("raidApiKey").value.trim();
+    return key ? { "X-ECLIPSE-DASHBOARD-KEY": key } : {};
+  };
+  async function raidRequest(path, options={}) {
+    const headers=Object.assign({},options.headers||{},raidHeaders());
+    const response=await fetch(path,Object.assign({},options,{headers,cache:"no-store"}));
+    let data={};try{data=await response.json()}catch(_){}
+    if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
+    return data;
+  }
+  function updateRaidPreview() {
+    $("raidPreviewTitle").textContent=$("raidGroupTitle").value.trim()||"Your group name preview";
+    $("raidPreviewNickname").textContent=$("raidNickname").value.trim()||"Your nickname";
+    const file=$("raidImageFile").files[0];
+    if(file){
+      if(window.raidPreviewUrl)URL.revokeObjectURL(window.raidPreviewUrl);
+      window.raidPreviewUrl=URL.createObjectURL(file);
+      $("raidPreviewImage").src=window.raidPreviewUrl;
+      $("raidPreviewImage").style.display="block";
+      $("raidPreviewImageLabel").textContent=file.name;
+    }
+  }
+  function selectedRaidGroups() {
+    return [...$("raidGroupChoices").querySelectorAll("input[data-raid-thread]:checked")].map(input=>input.value);
+  }
+  function renderRaidChoices(groups) {
+    const root=$("raidGroupChoices");root.replaceChildren();
+    if(!groups.length){root.textContent="No Messenger groups were returned.";return;}
+    for(const group of groups){
+      const label=document.createElement("label");
+      label.style.display="block";label.style.padding="5px 0";label.style.cursor="pointer";
+      const input=document.createElement("input");input.type="checkbox";input.value=group.threadID;input.dataset.raidThread="1";
+      const span=document.createElement("span");span.textContent=" "+group.name+" · "+group.threadID;
+      label.append(input,span);root.append(label);
+    }
+    updateRaidSelectionCount();
+  }
+  function updateRaidSelectionCount(){$("raidSelectionCount").textContent=selectedRaidGroups().length+" group(s) selected.";}
+  async function raidLoadGroups(){
+    try{const data=await request("/api/dashboard/groups");renderRaidChoices(data.groups||[]);$("raidActionMessage").textContent=(data.groups||[]).length+" Messenger group(s) loaded.";}
+    catch(error){$("raidActionMessage").textContent="Could not load Messenger groups: "+error.message;}
+  }
+  async function raidRefreshStatus(){
+    try{
+      const data=await raidRequest("/api/dashboard/raid/status");
+      const raid=data.raid||{};
+      $("raidStatus").textContent="Storage: "+(raid.available?"Neon connected":"Unavailable")+" · Image storage: "+(raid.imageStorageConfigured?"Ready":"Not configured")+" · Mode: "+(raid.active?"ON":"OFF")+(raid.error?" · "+raid.error:"");
+      $("raidThemeMessage").textContent=raid.theme?"Saved theme: "+raid.theme.groupTitle+" · nickname "+raid.theme.nickname+" · photo "+(raid.theme.hasImage?"uploaded":"missing"):"No saved theme yet.";
+      if(raid.theme){$("raidGroupTitle").value=raid.theme.groupTitle||"";$("raidNickname").value=raid.theme.nickname||"";updateRaidPreview();}
+      const statusRoot=$("raidGroupStatus");statusRoot.replaceChildren();
+      if(!raid.groups||!raid.groups.length)statusRoot.textContent="No Raid Mode groups registered.";
+      else for(const group of raid.groups){
+        const row=document.createElement("div");row.style.padding="6px 0";row.style.borderBottom="1px solid #293244";
+        const text=document.createElement("span");text.textContent=group.threadID+" · "+(group.enabled?"ON":"OFF")+" · "+group.status+(group.lastSync?" · synced "+new Date(group.lastSync).toLocaleString():"")+(group.lastError?" · "+group.lastError:"");
+        const repair=document.createElement("button");repair.textContent="Repair";repair.style.marginLeft="8px";repair.addEventListener("click",()=>raidRepair(group.threadID));
+        row.append(text,repair);statusRoot.append(row);
+      }
+      if(raid.theme&&raid.theme.hasImage&&!$("raidImageFile").files[0]){
+        try{const response=await fetch("/api/dashboard/raid/theme-image",{headers:raidHeaders(),cache:"no-store"});if(response.ok){const blob=await response.blob();if(window.raidStoredPreviewUrl)URL.revokeObjectURL(window.raidStoredPreviewUrl);window.raidStoredPreviewUrl=URL.createObjectURL(blob);$("raidPreviewImage").src=window.raidStoredPreviewUrl;$("raidPreviewImage").style.display="block";$("raidPreviewImageLabel").textContent=raid.theme.imageName||"Saved theme image";}}catch(_){}
+      }
+    }catch(error){$("raidStatus").textContent="Raid Mode status unavailable: "+error.message;}
+  }
+  async function raidSaveTheme(){
+    try{
+      const data=await raidRequest("/api/dashboard/raid/theme",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({groupTitle:$("raidGroupTitle").value,nickname:$("raidNickname").value})});
+      $("raidThemeMessage").textContent="Theme settings saved. Upload the group photo if it has not been saved yet.";
+      updateRaidPreview();return data.theme;
+    }catch(error){$("raidThemeMessage").textContent="Theme save failed: "+error.message;throw error;}
+  }
+  async function raidUploadImage(){
+    const file=$("raidImageFile").files[0];if(!file)throw new Error("Choose a PNG, JPEG, or WebP photo first.");
+    const response=await fetch("/api/dashboard/raid/theme-image",{method:"POST",headers:Object.assign({"Content-Type":file.type,"X-File-Name":file.name},raidHeaders()),body:file,cache:"no-store"});
+    let data={};try{data=await response.json()}catch(_){}
+    if(!response.ok)throw new Error(data.error||("HTTP "+response.status));
+    $("raidThemeMessage").textContent="Persistent theme photo uploaded: "+file.name;
+    return data.image;
+  }
+  async function raidRepair(threadID){
+    try{await raidRequest("/api/dashboard/raid/repair",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({threadID})});$("raidActionMessage").textContent="Repair requested for "+threadID+".";await raidRefreshStatus();}
+    catch(error){$("raidActionMessage").textContent="Repair failed: "+error.message;}
+  }
+  async function raidActivate(){
+    const ids=selectedRaidGroups();if(!ids.length){$("raidActionMessage").textContent="Select at least one group first.";return;}
+    const title=$("raidGroupTitle").value.trim(),nickname=$("raidNickname").value.trim();
+    if(!title||!nickname){$("raidActionMessage").textContent="Enter the group name and member nickname first.";return;}
+    if(!confirm("PREVIEW RAID MODE\n\nGroup name: "+title+"\nEvery member nickname: "+nickname+"\nSelected groups: "+ids.length+"\n\nThe bot will enforce this theme continuously. Continue?"))return;
+    try{
+      await raidSaveTheme();
+      if($("raidImageFile").files[0])await raidUploadImage();
+      const result=await raidRequest("/api/dashboard/raid/activate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({threadIDs:ids})});
+      const failed=(result.result.results||[]).filter(x=>!x.ok);
+      $("raidActionMessage").textContent="Raid Mode enabled for "+result.result.activated+" group(s). "+failed.length+" initial repair(s) failed; check their status below.";
+      await raidRefreshStatus();
+    }catch(error){$("raidActionMessage").textContent="Activation failed: "+error.message;}
+  }
+  async function raidEmergencyStop(){
+    if(!confirm("Emergency stop Raid Mode for every group in this Test Bot instance?"))return;
+    try{const data=await raidRequest("/api/dashboard/raid/emergency-stop",{method:"POST",headers:{"Content-Type":"application/json"},body:"{}"});$("raidActionMessage").textContent="Emergency stop completed. "+data.result.stopped+" group(s) stopped.";await raidRefreshStatus();}
+    catch(error){$("raidActionMessage").textContent="Emergency stop failed: "+error.message;}
+  }
+  $("raidGroupTitle").addEventListener("input",updateRaidPreview);$("raidNickname").addEventListener("input",updateRaidPreview);$("raidImageFile").addEventListener("change",updateRaidPreview);
+  $("raidRefresh").addEventListener("click",raidRefreshStatus);$("raidLoadGroups").addEventListener("click",raidLoadGroups);
+  $("raidSelectAll").addEventListener("click",()=>{$("raidGroupChoices").querySelectorAll("input[data-raid-thread]").forEach(input=>input.checked=true);updateRaidSelectionCount();});
+  $("raidClearGroups").addEventListener("click",()=>{$("raidGroupChoices").querySelectorAll("input[data-raid-thread]").forEach(input=>input.checked=false);updateRaidSelectionCount();});
+  $("raidGroupChoices").addEventListener("change",updateRaidSelectionCount);
+  $("raidSaveTheme").addEventListener("click",()=>raidSaveTheme().catch(()=>{}));
+  $("raidUploadImage").addEventListener("click",()=>raidUploadImage().then(raidRefreshStatus).catch(error=>$("raidThemeMessage").textContent="Photo upload failed: "+error.message));
+  $("raidActivate").addEventListener("click",raidActivate);$("raidRefreshStatus").addEventListener("click",raidRefreshStatus);$("raidEmergencyStop").addEventListener("click",raidEmergencyStop);
+  setInterval(()=>{if($("raidApiKey").value.trim())raidRefreshStatus();},30000);
+
+  $("saveSession").addEventListener("click",saveSession); $("clearSession").addEventListener("click",clearSession); $("refreshSession").addEventListener("click",refreshSession);
+  $("refreshBtn").addEventListener("click",refresh); $("startBtn").addEventListener("click",()=>control("start")); $("stopBtn").addEventListener("click",()=>control("stop")); $("eventsBtn").addEventListener("click",loadEvents);
+  $("refreshGroups").addEventListener("click",refreshGroups); $("loadGroup").addEventListener("click",loadGroup); $("saveGroup").addEventListener("click",saveGroup); $("saveReaction").addEventListener("click",saveReaction); $("loadSettings").addEventListener("click",loadSettings);
+  refresh(); loadEvents(); loadSettings(); refreshSession(); setInterval(refresh,15000);
+})();
+</script></body></html>
